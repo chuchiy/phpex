@@ -1,7 +1,8 @@
 # The PHPex Web Framework
 
 [![Build Status](https://api.travis-ci.org/chuchiy/phpex.svg)](https://travis-ci.org/chuchiy/phpex)
-[![Software License][ico-license]](LICENSE)
+[![Coverage Status](https://coveralls.io/repos/chuchiy/phpex/badge.svg?branch=master&service=github)](https://coveralls.io/github/chuchiy/phpex?branch=master)
+[![License](https://poser.pugx.org/pugx/badge-poser/license?format=plastic)](https://packagist.org/packages/chuchiy/phpex)
 
 PHPex is a lightweight, flexible, developer friendly micro web framework written in PHP.
 
