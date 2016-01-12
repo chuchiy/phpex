@@ -2,7 +2,7 @@
 namespace Pex;
 class PathParameters
 {
-    public function match($path, $pattern) {
+    public static function match($path, $pattern) {
         $paramKeys = [];
         $regexPattern = preg_replace_callback('/<(\w*)>/', function($matches) use ($paramKeys) {
             $paramKeys[] = $matches[1];

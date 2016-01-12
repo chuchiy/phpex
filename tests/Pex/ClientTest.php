@@ -49,6 +49,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($c->publicIp());
         $c = new Client($this->request->withHeader('x-real-ip', '202.108.2.3'));
         $this->assertEquals('202.108.2.3', $c->publicIp());
+        $c = new Client($this->request->withHeader('x-real-ip', '192.168.2.2'));
+        $this->assertNull($c->publicIp());
+        $c = new Client($this->request->withHeader('x-forwarded-for', '192.168.23.2, 172.25.72.2'));
+        $this->assertNull($c->publicIp());
         $c = new Client($this->request->withHeader('x-forwarded-for', '192.168.23.2, 202.108.2.1'));
         $this->assertEquals('202.108.2.1', $c->publicIp());
         $c = new Client(ServerRequestFactory::fromGlobals(['REMOTE_ADDR'=> '202.108.3.1']));

@@ -37,10 +37,13 @@ class Client
             return $ip;
         }
         $forwardedfor = $this->getHeader('x-forwarded-for');
-        $ip = array_pop(preg_split("/;|,|\s/", $forwardedfor));
-        $ip = filter_var($ip, FILTER_VALIDATE_IP, $publicIpFlag);
-        if ($ip) {
-            return $ip;
+        if ($forwardedfor) {
+            $forwardedItems = preg_split("/;|,|\s/", $forwardedfor); 
+            $ip = array_pop($forwardedItems);
+            $ip = filter_var($ip, FILTER_VALIDATE_IP, $publicIpFlag);
+            if ($ip) {
+                return $ip;
+            }
         }
 
         return null;
