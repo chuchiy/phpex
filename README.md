@@ -12,6 +12,14 @@ The main purpose of PHPex framework is to solve some important real-world applic
 - request handler can return String, Callable, Traversable, Generator, Stream. Just for your convenience
 - lazy template for real-world complex web page composition
 
+## Installation
+
+Use [Composer](https://getcomposer.org/) to install PHPex.
+
+```bash
+$ composer require chuchiy/phpex
+```
+
 ## Getting Started
 
 Single file demo, don't use it in production:
@@ -64,9 +72,10 @@ Save above contents to index.php and test with the built-in PHP server:
 ```bash
 $ php -S localhost:8080
 ```
-
 Visit http://localhost:8080/hello/world will display *hello world*.
+
 Visit http://localhost:8080/get?id=123 will get jsonize result *{"name": "foo", 'id': 123}* 
+
 Visit http://localhost:8080/console/send/foobar will log text *foobar* to server console
 
 ## Configuration
@@ -493,97 +502,3 @@ class Page {
     }
 }
 ```
-
-
-
-```php
-//use built-in Jsonize Plugin
-$pex->install(\Pex\Plugin\Jsonize);
-//inject a sqlite instance
-
-//add annotation plugin maker
-$pex->bindAnnotation('csv', function($name, $fields){
-    $plugin = function($run) use ($name, $fields) {
-        return function($cycle) use ($run) {
-            $r = $run($cycle);
-            $fp = fopen('php://memory', 'r+');
-            fputcsv($fp, $fields);
-            foreach($r as $rec) {
-                fputcsv($fp, $rec);
-            }
-            rewind($fp);
-            return $fp;
-        };
-    };
-    return $plugin;
-})
-
-$pex->attach('/quick/')->get('/list', function($cycle){
-    return $cycle->db->query("select * from foo", \PDO::FETCH_ASSOC);
-})->get('/show/<id>', function($cycle){
-    $stmt = $cycle->db->prepare("select * from foo where id = ?");
-    $stmt->execute([$cycle['id']]);
-    return $stmt;
-})->with(function($run){
-    return function($cycle) use ($run) {
-        $r = $run($cycle);
-        return ($r instanceof \PDOStatement)?$r->fetchAll(\PDO::FETCH_ASSOC):$r;
-    };
-});
-
-class View {
-    public function __invoke($route) {
-        //class level plugin install
-        $route->install(function($run){
-            return function($cycle) use ($run) {
-                //json decode request body
-                $cycle->register('input', function($c) {
-                    return json_decode((string)$c->request()->getBody(), true);
-                });
-                return $run($cycle);
-            };
-        });
-        $route->bindAnnotation('rot13', function($name, $args){
-            return function($run) {
-                return function($cycle) use ($run) {
-                    $r = $run($cycle);
-                    return (is_string)?str_rot13($r):$r;
-                };
-            };
-        });
-    }
-
-    /**
-     * @post('/echoback')
-     */
-    public function echoBack($cycle) {
-        return $cycle->input;
-    }    
-
-    /**
-     * @get('/csv')
-     * @get('/show/csv')
-     * @csv('id', 'name', 'city')
-     */
-    public function showCsv($cycle) {
-        $rs = [];
-        foreach ($cycle->db->query("select id,name,city,ctime from foo", \PDO::FETCH_NUM) as $row) {
-            $rs[] = $row;
-        }
-        return $rs;
-    }
-
-    /**
-     * @get('/rot13/<message>')
-     * @rot13
-     */
-    public function rot13($cycle) {
-        return $cycle['message'];
-    }
-
-}
-
-$pex->serve();
-
-```
-
