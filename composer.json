@@ -1,0 +1,23 @@
+{
+    "name": "chuchiy/phpex",
+    "description": "lightweight, flexible, developer friendly micro web framework",
+    "license": "The MIT License (MIT)",
+    "authors": [
+        {
+            "name": "Chu-Chi Yang",
+            "email": "chuchiyang@outlook.com"
+        }
+    ],
+    "require": {
+        "zendframework/zend-diactoros": "^1.3"
+    },
+    "require-dev": {
+        "twig/twig": "1.*",
+        "psr/log": "^1.0",
+        "psr/cache": "^1.0",
+        "psr/cache-util": "1.0.*@dev"
+    },
+    "autoload": {
+        "psr-4": {"Pex\\": "src/Pex/"}
+    }
+}
