@@ -13,4 +13,3 @@ class CatchHttpException extends BasePlugin
         }
     }
 }
-

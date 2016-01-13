@@ -27,10 +27,10 @@ class AnnotationParserTest extends \PHPUnit_Framework_TestCase
     public function testParseLogin()
     {
         $loginanno = AnnotationParser::parse($this->loginAnno);
-        foreach($loginanno as $name => &$params) {
-            $params = array_map(function($p){
-                return ($p)?$p():NULL;
-            }, $params); 
+        foreach ($loginanno as $name => &$params) {
+            $params = array_map(function ($p) {
+                return ($p)?$p():null;
+            }, $params);
         }
         $this->assertEquals(
             [
@@ -51,15 +51,15 @@ class AnnotationParserTest extends \PHPUnit_Framework_TestCase
     public function testParseHome()
     {
         $homeanno = AnnotationParser::parse($this->homeAnno);
-        foreach($homeanno as $name => &$params) {
-            $params = array_map(function($p){
-                return ($p)?$p():NULL;
-            }, $params); 
+        foreach ($homeanno as $name => &$params) {
+            $params = array_map(function ($p) {
+                return ($p)?$p():null;
+            }, $params);
         }
         $this->assertEquals(
             [
               'get' => [['/path']],
-              'auth' => [NULL],
+              'auth' => [null],
               'bad' => [[]],
             ],
             $homeanno

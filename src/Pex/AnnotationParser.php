@@ -1,24 +1,25 @@
 <?php
 namespace Pex;
-class AnnotationParser 
+
+class AnnotationParser
 {
 
-	const ANNOTATION_REGEX = '/@(\w+)(?:\s*(?:\(\s*)?(.*?)(?:\s*\))?)??\s*(?:\n|\*\/)/S';
+    const ANNOTATION_REGEX = '/@(\w+)(?:\s*(?:\(\s*)?(.*?)(?:\s*\))?)??\s*(?:\n|\*\/)/S';
     const PARAMETERS_REGEX = '/[\"\']([^\"\']*)[\"\'],?\s*/S';
 
-    public static function parseAll($docComment) 
+    public static function parseAll($docComment)
     {
- 		$hasAnnotations = preg_match_all( self::ANNOTATION_REGEX, $docComment, $matches, PREG_SET_ORDER);
+        $hasAnnotations = preg_match_all(self::ANNOTATION_REGEX, $docComment, $matches, PREG_SET_ORDER);
 
-		if (!$hasAnnotations) {
-			return NULL;
-		}
-		$annos = [];
-		foreach ($matches as $match) {
+        if (!$hasAnnotations) {
+            return null;
+        }
+        $annos = [];
+        foreach ($matches as $match) {
             $name = $match[1];
             $paramsResult = null;
 
-			if (isset($match[2])) {
+            if (isset($match[2])) {
                 $paramspart = $match[2];
                 $params = [];
                 $hasParams = preg_match_all(self::PARAMETERS_REGEX, $paramspart, $params, PREG_SET_ORDER);
@@ -26,30 +27,30 @@ class AnnotationParser
                     foreach ($params as $param) {
                         $paramsResult[] = $param[1];
                     }
-                } 
+                }
             }
             $annos[$name][] = $paramsResult;
-		}
-		return $annos;
+        }
+        return $annos;
    
     }
 
 
-    public static function parse($docComment) 
+    public static function parse($docComment)
     {
-		$hasAnnotations = preg_match_all( self::ANNOTATION_REGEX, $docComment, $matches, PREG_SET_ORDER);
+        $hasAnnotations = preg_match_all(self::ANNOTATION_REGEX, $docComment, $matches, PREG_SET_ORDER);
 
-		if (!$hasAnnotations) {
-			return NULL;
-		}
-		$annos = [];
-		foreach ($matches as $match) {
+        if (!$hasAnnotations) {
+            return null;
+        }
+        $annos = [];
+        foreach ($matches as $match) {
             $name = $match[1];
             $params = null;
 
-			if (isset($match[2])) {
+            if (isset($match[2])) {
                 $paramspart = $match[2];
-                $params = function() use ($paramspart) {
+                $params = function () use ($paramspart) {
                     $params = [];
                     $rs = [];
                     $hasParams = preg_match_all(self::PARAMETERS_REGEX, $paramspart, $params, PREG_SET_ORDER);
@@ -57,12 +58,12 @@ class AnnotationParser
                         foreach ($params as $param) {
                             $rs[] = $param[1];
                         }
-                    } 
+                    }
                     return $rs;
                 };
             }
             $annos[$name][] = $params;
-		}
-		return $annos;
-	}
+        }
+        return $annos;
+    }
 }

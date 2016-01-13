@@ -8,7 +8,9 @@ class AnnoMock
      * @auth
      * @bad(abc)
      */
-    public function home(){}
+    public function home()
+    {
+    }
     
     /**
      * @get("/login")
@@ -16,8 +18,7 @@ class AnnoMock
      * @input("username", "string")
      * @input("password", 'string')
      */
-    public function login(){}
-
+    public function login()
+    {
+    }
 }
-
-

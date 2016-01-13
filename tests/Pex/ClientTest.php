@@ -1,5 +1,6 @@
 <?php
 namespace Pex;
+
 use Zend\Diactoros\ServerRequestFactory;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
@@ -75,4 +76,3 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         
     }
 }
-

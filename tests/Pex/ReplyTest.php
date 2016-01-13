@@ -25,7 +25,7 @@ class ReplyTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     *           
+     *
      */
     public function testNullSet()
     {
@@ -37,7 +37,4 @@ class ReplyTest extends \PHPUnit_Framework_TestCase
         $stream = Reply::stringstream('hello world');
         $this->assertEquals('hello world', stream_get_contents($stream));
     }
-
 }
-
-

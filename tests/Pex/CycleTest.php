@@ -1,5 +1,6 @@
 <?php
 namespace Pex;
+
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Uri;
 
@@ -7,8 +8,8 @@ class CycleTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $headerWriter = function($response) use (&$headers) {
-            $this->headers = $response->getHeaders(); 
+        $headerWriter = function ($response) use (&$headers) {
+            $this->headers = $response->getHeaders();
             $this->statusCode = $response->getStatusCode();
         };
         $this->plainCycle = new Cycle(new ServerRequest, $headerWriter, 'php://memory');
@@ -25,14 +26,14 @@ class CycleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException RuntimeException 
-     *           
+     * @expectedException RuntimeException
+     *
      */
     public function testDupCall()
     {
         $cycle = new Cycle;
-        $w = $cycle(); 
-        $w = $cycle(); 
+        $w = $cycle();
+        $w = $cycle();
     
     }
 
@@ -52,7 +53,7 @@ class CycleTest extends \PHPUnit_Framework_TestCase
 
     public function testMountpoint()
     {
-        $this->plainCycle->setMountpoint('/mnt'); 
+        $this->plainCycle->setMountpoint('/mnt');
         $this->assertEquals('/mnt', $this->plainCycle->mountpoint());
     }
 
@@ -63,14 +64,14 @@ class CycleTest extends \PHPUnit_Framework_TestCase
      */
     public function testInterrupt()
     {
-        $this->plainCycle->interrupt(403); 
+        $this->plainCycle->interrupt(403);
     }
 
     public function testRegister()
     {
         $cnt = 0;
-        $this->plainCycle->register('abc', function($c) use (&$cnt) {
-            return ++$cnt; 
+        $this->plainCycle->register('abc', function ($c) use (&$cnt) {
+            return ++$cnt;
         });
         $this->assertTrue(isset($this->plainCycle->abc));
         $this->assertFalse(isset($this->plainCycle->notfound));
@@ -82,8 +83,8 @@ class CycleTest extends \PHPUnit_Framework_TestCase
     public function testInject()
     {
         $cnt = 0;
-        $this->plainCycle->inject('abc', function($c) use (&$cnt) {
-            return ++$cnt; 
+        $this->plainCycle->inject('abc', function ($c) use (&$cnt) {
+            return ++$cnt;
         });
         $this->assertEquals(1, $this->plainCycle->abc);
         $this->assertEquals(2, $this->plainCycle->abc);
@@ -125,7 +126,7 @@ class CycleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException InvalidArgumentException
-     *           
+     *
      */
     public function testWantNoExist()
     {
@@ -141,7 +142,7 @@ class CycleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RuntimeException
-     *           
+     *
      */
     public function testPropSet()
     {
@@ -151,7 +152,7 @@ class CycleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RuntimeException
-     *           
+     *
      */
     public function testPropGetNoneExist()
     {
@@ -161,7 +162,7 @@ class CycleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RuntimeException
-     *           
+     *
      */
     public function testParamSet()
     {
@@ -171,7 +172,7 @@ class CycleTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException RuntimeException
-     *           
+     *
      */
     public function testParamUnset()
     {
@@ -186,7 +187,4 @@ class CycleTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($cycle['foo']));
         $this->assertFalse(isset($cycle['bar']));
     }
-
-
 }
-

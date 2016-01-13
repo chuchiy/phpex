@@ -20,52 +20,52 @@ class Cycle implements \ArrayAccess
 
     public static function create()
     {
-        return new self();    
+        return new self();
     }
 
-    public function __construct($request=null, $responseHeaderSender=null, $responseBody='php://output')
+    public function __construct($request = null, $responseHeaderSender = null, $responseBody = 'php://output')
     {
         $this->request = ($request)?$request:ServerRequestFactory::fromGlobals();
         $this->responseBody = $responseBody;
-        $this->responseHeaderSender = ($responseHeaderSender)?$responseHeaderSender:[new ResponseSender, 'emitStatusLineAndHeaders'];
-        $this->client = new Client($this->request);
-        $parsedbody = ($this->request->getParsedBody())?$this->request->getParsedBody():[];
-        $this->params = $this->request->getCookieParams() + $parsedbody + $this->request->getQueryParams();
-        $this->reply = new Reply;
+        $this->responseHeaderSender =
+            ($responseHeaderSender)?$responseHeaderSender:[new ResponseSender, 'emitStatusLineAndHeaders'];
+            $this->client = new Client($this->request);
+            $parsedbody = ($this->request->getParsedBody())?$this->request->getParsedBody():[];
+            $this->params = $this->request->getCookieParams() + $parsedbody + $this->request->getQueryParams();
+            $this->reply = new Reply;
     }
 
     public function inject($name, $callable)
     {
-        if($callable === null) { 
-            unset($this->injections[$name]); 
+        if ($callable === null) {
+            unset($this->injections[$name]);
         } else {
-            $this->injections[$name] = $callable; 
-        } 
+            $this->injections[$name] = $callable;
+        }
     }
 
     public function register($name, $callable)
     {
-        $closure = function ($cycle) use ($callable) { 
-            static $object; 
-            if (null === $object) { 
-                $object = $callable($cycle); 
-            } 
-            return $object; 
+        $closure = function ($cycle) use ($callable) {
+            static $object;
+            if (null === $object) {
+                $object = $callable($cycle);
+            }
+            return $object;
         };
-        $this->inject($name, $closure->bindTo(null)); 
+        $this->inject($name, $closure->bindTo(null));
     }
 
     /**
      * throw a \Pex\Exception\HttpException to interrupt process and return a custom http response
      * should be used with \Pex\Plugin\CatchHttpException
-     *
      */
-    public function interrupt($status, $headers=[], $body=null)
+    public function interrupt($status, $headers = [], $body = null)
     {
         throw new \Pex\Exception\HttpException($status, $headers, $body);
     }
 
-    public function get($name, $default=null) 
+    public function get($name, $default = null)
     {
         try {
             return $this->want($name);
@@ -86,8 +86,8 @@ class Cycle implements \ArrayAccess
 
     public function __get($name)
     {
-        if(isset($this->injections[$name])) {
-            return $this->injections[$name]($this); 
+        if (isset($this->injections[$name])) {
+            return $this->injections[$name]($this);
         }
         throw new \RuntimeException("injection callable $name is not exist");
     }
@@ -95,8 +95,8 @@ class Cycle implements \ArrayAccess
     public function want($name)
     {
         if (isset($this->pathParameters[$name])) {
-            return $this->pathParameters[$name]; 
-        } else if (isset($this->params[$name])) {
+            return $this->pathParameters[$name];
+        } elseif (isset($this->params[$name])) {
             return $this->params[$name];
         } else {
             throw new \InvalidArgumentException("$name is not found in parameters");
@@ -150,7 +150,7 @@ class Cycle implements \ArrayAccess
 
     public function writer()
     {
-        return $this->writer;    
+        return $this->writer;
     }
 
     public function mountpoint()
@@ -160,7 +160,7 @@ class Cycle implements \ArrayAccess
 
     public function setPathParameters($params)
     {
-        $this->pathParameters = $params; 
+        $this->pathParameters = $params;
     }
 
     public function setMountPoint($mountpoint)
@@ -176,13 +176,13 @@ class Cycle implements \ArrayAccess
         $headers = array_merge($this->reply->getHeaders(), $headers);
         $this->response = new Response($this->responseBody, $status, $headers);
         $headers_sent = [];
-        $this->writer = function($data=null) use (&$headers_sent, $headers){
+        $this->writer = function ($data = null) use (&$headers_sent, $headers) {
             if (!$headers_sent) {
                 call_user_func($this->responseHeaderSender, $this->response);
-                $headers_sent = $headers; 
+                $headers_sent = $headers;
             }
             if ($data) {
-                return $this->response->getBody()->write($data); 
+                return $this->response->getBody()->write($data);
             }
         };
         return $this->writer;

@@ -16,8 +16,7 @@
         "twig/twig": "1.*",
         "psr/log": "^1.0",
         "psr/cache": "^1.0",
-        "psr/cache-util": "1.0.*@dev",
-        "satooshi/php-coveralls": "^1.0"
+        "psr/cache-util": "1.0.*@dev"
     },
     "autoload": {
         "psr-4": {"Pex\\": "src/Pex/"}

@@ -3,7 +3,8 @@ namespace Pex;
 
 class PathParamTest extends \PHPUnit_Framework_TestCase
 {
-    public function testParamMatch() {
+    public function testParamMatch()
+    {
 
         $pattern = '/path/<uid>/<name>';
         $path = '/path/1202/foo';
@@ -12,7 +13,8 @@ class PathParamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['name'=>'foo', 'uid'=>'1202'], $matches);
     }
 
-    public function testNoneParamMatch() {
+    public function testNoneParamMatch()
+    {
 
         $pattern = '/user';
         $path = '/user';
@@ -21,7 +23,8 @@ class PathParamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([], $matches);
     }
 
-    public function testExactParamMatch() {
+    public function testExactParamMatch()
+    {
 
         $pattern = '/path';
         $path = '/path2my';
@@ -29,7 +32,4 @@ class PathParamTest extends \PHPUnit_Framework_TestCase
         $matches = PathParameters::match($path, $pattern);
         $this->assertEquals(false, $matches);
     }
-
-
-
 }

@@ -10,14 +10,14 @@ class View
     public function __invoke($route)
     {
         $route->get('/myname', [$this, 'myname']);
-        $route->bindAnnotation('view', new \Pex\Plugin\Templater(__DIR__.'/templates/'));    
+        $route->bindAnnotation('view', new \Pex\Plugin\Templater(__DIR__.'/templates/'));
         //add some extra data
-        $route->install(function($run){
-            return function($cycle) use ($run) {
+        $route->install(function ($run) {
+            return function ($cycle) use ($run) {
                 $r = $run($cycle);
-                if ((is_array($r) and array_keys($r) !== range(0, count($r) - 1)) or ($r instanceof \ArrayAccess)){
-                    $r['author'] = 'chuchi'; 
-                    $r['date'] = 2015; 
+                if ((is_array($r) and array_keys($r) !== range(0, count($r) - 1)) or ($r instanceof \ArrayAccess)) {
+                    $r['author'] = 'chuchi';
+                    $r['date'] = 2015;
                     return $r;
                 } else {
                     return $r;
@@ -28,7 +28,7 @@ class View
 
     public function myname($cycle)
     {
-        return "Chu-Chi Yang At " . $cycle->mountpoint(); 
+        return "Chu-Chi Yang At " . $cycle->mountpoint();
     }
 
 
@@ -56,7 +56,7 @@ class View
             ['name' => 'hello'],
             ['name' => 'world'],
         ];
-        return $r; 
+        return $r;
     }
 
     /**
@@ -64,7 +64,7 @@ class View
      * @decor('a', 'b')
      * @get('/hello')
      */
-    public function hello($cycle) 
+    public function hello($cycle)
     {
         $r = $cycle->view->render(['a' => 'b'], 'small.php');
 
@@ -78,7 +78,7 @@ class View
      * @decor('foo', 'bar')
      * @get('/decor')
      */
-    public function decor($cycle) 
+    public function decor($cycle)
     {
         return 'plaintext';
     }
@@ -89,7 +89,7 @@ class View
      */
     public function generator($cycle)
     {
-        foreach(range(0, 10) as $n) {
+        foreach (range(0, 10) as $n) {
             yield $n;
         }
     }
@@ -98,7 +98,7 @@ class View
      *
      * @get('/print')
      */
-    public function printer($cycle) 
+    public function printer($cycle)
     {
         return ['hello', 'world'];
     }
@@ -142,5 +142,4 @@ class View
     {
         return ['p' => $cycle->want('p'), 'dat' => (string)$cycle->request()->getBody()];
     }
-
 }

@@ -3,7 +3,7 @@ namespace Pex;
 
 class Reply implements \ArrayAccess
 {
-    private $headers=[]; 
+    private $headers=[];
 
     public function getHeaders()
     {
@@ -15,7 +15,7 @@ class Reply implements \ArrayAccess
         $this[$name] = $value;
     }
 
-    public function offsetSet($offset, $value) 
+    public function offsetSet($offset, $value)
     {
         if (!$offset) {
             throw new \InvalidArgumentException("empty response header name");
@@ -34,7 +34,7 @@ class Reply implements \ArrayAccess
         unset($this->headers[$offset]);
     }
 
-    public function offsetGet($offset) 
+    public function offsetGet($offset)
     {
         return isset($this->headers[$offset]) ? $this->headers[$offset] : null;
     }
@@ -42,7 +42,6 @@ class Reply implements \ArrayAccess
     /**
      * make a valid stream resource from string
      * handy function for body stream of http response
-     *
      */
     public static function stringstream($str)
     {
@@ -54,4 +53,3 @@ class Reply implements \ArrayAccess
         return $fp;
     }
 }
-

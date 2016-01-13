@@ -7,17 +7,17 @@ class Controller
     private $routeDefinitions=[];
     private $annotations;
 
-    public function __construct($instance, $mountpoint) 
+    public function __construct($instance, $mountpoint)
     {
         $this->instance = $instance;
         $this->reflection = new \ReflectionClass($instance);
-        foreach($this->reflection->getMethods() as $methodRef) {
+        foreach ($this->reflection->getMethods() as $methodRef) {
             $annos = \Pex\AnnotationParser::parseAll($methodRef->getDocComment());
-            foreach(self::$routeMethods as $annoName=>$httpMethods) {
+            foreach (self::$routeMethods as $annoName => $httpMethods) {
                 if (!isset($annos[$annoName])) {
                     continue;
                 }
-                foreach($annos[$annoName] as $pattern) {
+                foreach ($annos[$annoName] as $pattern) {
                     /*
                     $pattern = $pattern[0];
                     //@TODO we need a universal mountpoint pattern normalizer
@@ -26,8 +26,10 @@ class Controller
                     }
                     */
                     $pattern = \Pex\Route::joinPath($mountpoint, $pattern[0]);
-                    foreach((array)$httpMethods as $httpMethod) {
-                        $this->routeDefinitions[$httpMethod][] = [new Handler($this->instance, $methodRef, $annos), $pattern];
+                    foreach ((array)$httpMethods as $httpMethod) {
+                        $this->routeDefinitions[$httpMethod][] = [
+                            new Handler($this->instance, $methodRef, $annos),
+                            $pattern];
                     }
                 }
             }
@@ -36,11 +38,10 @@ class Controller
 
     public function insertDefinitions(&$definitions)
     {
-        foreach($this->routeDefinitions as $method=>$defs) {
-            foreach($defs as $def) {
+        foreach ($this->routeDefinitions as $method => $defs) {
+            foreach ($defs as $def) {
                 $definitions[$method][] = $def;
             }
         }
     }
-
 }

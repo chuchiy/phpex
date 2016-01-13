@@ -11,7 +11,7 @@ class Route
     use Route\PluginTrait;
     use Route\HttpMethodTrait;
 
-    public function __construct($mountpoint='/', $class=null)
+    public function __construct($mountpoint = '/', $class = null)
     {
         $this->mountpoint = $mountpoint;
         $this->controllerClass = $class;
@@ -26,13 +26,11 @@ class Route
      * accept check whether the requestPath starts with mountpoint or not
      * then accept will try to initialize controllerObject
      * accept must be called before match
-     *
-     *
      */
-    public function accept($requestPath, $flags=0)
+    public function accept($requestPath, $flags = 0)
     {
         if (strpos($requestPath, $this->mountpoint) !== 0) {
-            return False;
+            return false;
         }
         //initialize controller only if route accept this request
         if ($this->controllerClass and !$this->controller) {
@@ -42,14 +40,14 @@ class Route
             }
             //flag to turn off annotation based routing
             if ($flags & \Pex\Pex::DISPATCH_FLAG_DO_NOT_PARSE_ANNOTATION) {
-                return True;
+                return true;
             }
 
             $this->controller = new Route\Controller($controllerObject, $this->mountpoint);
             $this->controller->insertDefinitions($this->definitions);
         }
 
-        return True;
+        return true;
     }
 
     public function with($plugin)
@@ -65,12 +63,12 @@ class Route
         }
         */
         if (!isset($this->definitions[$method])) {
-            return null; 
+            return null;
         }
-        foreach($this->definitions[$method] as $define) {
+        foreach ($this->definitions[$method] as $define) {
             list($handler, $pattern) = $define;
             $pathParams = PathParameters::match($requestPath, $pattern);
-            if ($pathParams !== FALSE) {
+            if ($pathParams !== false) {
                 $pathParameters = $pathParams;
                 return $handler;
             }
@@ -80,7 +78,7 @@ class Route
 
     private function add($methods, $pattern, $handler)
     {
-        foreach((array)$methods as $method) {
+        foreach ((array)$methods as $method) {
             $this->definitions[$method][] = [$handler, self::joinPath($this->mountpoint, $pattern)];
         }
         return $this;
@@ -89,6 +87,6 @@ class Route
     public static function joinPath()
     {
         $paths = func_get_args();
-        return preg_replace('/\/+/','/',join('/', $paths));
+        return preg_replace('/\/+/', '/', join('/', $paths));
     }
 }

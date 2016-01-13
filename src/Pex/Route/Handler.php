@@ -1,7 +1,7 @@
 <?php
 namespace Pex\Route;
 
-class Handler 
+class Handler
 {
     private $instance;
     private $methodRef;
@@ -21,9 +21,9 @@ class Handler
         return [$this->instance, $this->methodRef->getName()];
     }
 
-    public function buildPlugins($annotationPlugins=[])
+    public function buildPlugins($annotationPlugins = [])
     {
-        foreach ($this->methodAnnos as $name=>$paramslist) {
+        foreach ($this->methodAnnos as $name => $paramslist) {
             if (!isset($annotationPlugins[$name])) {
                 continue;
             }
@@ -33,5 +33,4 @@ class Handler
         }
         return $this->getPlugins();
     }
-
 }

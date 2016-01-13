@@ -73,7 +73,16 @@ class PexServerTest extends \PHPUnit_Framework_TestCase
         $r = $this->runner->get('/v/page');
     
         $this->assertEquals('text/plain; charset=utf-8', $r->getHeader('content-type')[0]);
-        $text = "Plain Doc\n==========================\n* item foo\n* item bar\n* item hello\n* item world\n\nchuchi @ 2015";
+        $text = <<<EOD
+Plain Doc
+==========================
+* item foo
+* item bar
+* item hello
+* item world
+
+chuchi @ 2015
+EOD;
         $this->assertEquals($text, (string)$r->getBody());
     }
 
@@ -118,15 +127,15 @@ class PexServerTest extends \PHPUnit_Framework_TestCase
 
     public function testRouteAttach()
     {
-        $this->pex->attach('/test/')->route('/redir', function($cycle){
+        $this->pex->attach('/test/')->route('/redir', function ($cycle) {
             $cycle->client()->redirect($cycle->want('cont'));
-        })->get('/with/<uid>/<pid>', function($cycle){
+        })->get('/with/<uid>/<pid>', function ($cycle) {
             return [$cycle->get('uid'), $cycle->get('pid')];
-        })->route('/display', function($cycle){
-            return 'display';    
+        })->route('/display', function ($cycle) {
+            return 'display';
         });
-        $this->pex->route('/goto/<dest>', function($cycle){
-            return $cycle->want('dest'); 
+        $this->pex->route('/goto/<dest>', function ($cycle) {
+            return $cycle->want('dest');
         });
         $r = $this->runner->post('/goto/home');
         $this->assertEquals("home", (string)$r->getBody());
@@ -153,32 +162,32 @@ class PexServerTest extends \PHPUnit_Framework_TestCase
     public function testFullHttpMethod()
     {
         $items = [];
-        $this->pex->install(function($run){
-            return function($cycle) use ($run) {
-                $cycle->register('input', function($c) {
-                    return json_decode((string)$c->request()->getBody(), true); 
+        $this->pex->install(function ($run) {
+            return function ($cycle) use ($run) {
+                $cycle->register('input', function ($c) {
+                    return json_decode((string)$c->request()->getBody(), true);
                 });
-                return $run($cycle);    
+                return $run($cycle);
             };
         });
 
-        $this->pex->put('/items/', function($cycle) use (&$items) {
+        $this->pex->put('/items/', function ($cycle) use (&$items) {
             $id = uniqid();
             $items[$id] = $cycle->input;
             return ['id'=>$id];
-        })->delete('/items/', function($cycle) use (&$items){
+        })->delete('/items/', function ($cycle) use (&$items) {
             $items = [];
-            return ['ok'=>True];
-        })->get('/items/', function($cycle) use (&$items){
-            return ['items'=>$items]; 
+            return ['ok'=>true];
+        })->get('/items/', function ($cycle) use (&$items) {
+            return ['items'=>$items];
         });
-        $this->pex->attach('/items')->put('/<id>', function($cycle) use (&$items){
+        $this->pex->attach('/items')->put('/<id>', function ($cycle) use (&$items) {
             $items[$cycle['id']] = $cycle->input;
-            return ['ok'=>True];
-        })->delete('/<id>', function($cycle) use (&$items){
+            return ['ok'=>true];
+        })->delete('/<id>', function ($cycle) use (&$items) {
             unset($items[$cycle['id']]);
-            return ['ok'=>True];
-        })->get('/<id>', function($cycle) use (&$items){
+            return ['ok'=>true];
+        })->get('/<id>', function ($cycle) use (&$items) {
             return ['item'=>$items[$cycle['id']]];
         });
         $this->assertEquals(['items'=>[]], json_decode($this->runner->get('/items/')->getBody(), true));
@@ -192,5 +201,3 @@ class PexServerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['items'=>[]], json_decode($this->runner->get('/items/')->getBody(), true));
     }
 }
-
-

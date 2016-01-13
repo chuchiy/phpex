@@ -1,6 +1,6 @@
 Plain Doc
 ==========================
-<?php 
+<?php
 foreach ($list as $rec) {
 ?>
 * item <?= $rec['name'] ?>

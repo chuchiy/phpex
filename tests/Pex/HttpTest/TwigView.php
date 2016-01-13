@@ -11,7 +11,7 @@ class TwigView
      */
     public function show($cycle)
     {
-        return ['name'=> 'chuchi']; 
+        return ['name'=> 'chuchi'];
     }
 
     /**
@@ -23,5 +23,4 @@ class TwigView
     {
         return $cycle->twig->render(['name'=>'foobar'], $cycle['page'] . '.html');
     }
-
 }

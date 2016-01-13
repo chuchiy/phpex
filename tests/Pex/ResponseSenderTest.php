@@ -1,8 +1,9 @@
 <?php
 namespace Pex;
+
 use Zend\Diactoros\Response;
 
-function header($string, $replace=true)
+function header($string, $replace = true)
 {
     ResponseSenderTest::header($string, $replace);
 }
@@ -34,5 +35,4 @@ class ResponseSenderTest extends \PHPUnit_Framework_TestCase
          
     
     }
-
 }

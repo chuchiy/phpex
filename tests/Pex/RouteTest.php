@@ -6,7 +6,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     public function testBasicRoute()
     {
         $r = new Route('/test/');
-        $echoback = function($r) {
+        $echoback = function ($r) {
             return $r;
         };
         $r->get('/foo', $echoback);
@@ -48,11 +48,17 @@ class RouteTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($r->accept('/test/decor'));
         $fn = $r->match('GET', '/test/decor', $parameters);
         $this->assertEquals([new \Pex\HttpTest\View, 'decor'], $fn->getCallable());
-        $dummyPlugin = function($name, $args) {
+        $dummyPlugin = function ($name, $args) {
             return [$name, $args];
         };
-        $this->assertEquals([['decor', ['foo', 'bar']], ['view', ['abc.php']]] , $fn->buildPlugins(['view'=>$dummyPlugin, 'decor'=>$dummyPlugin]));
+        $this->assertEquals(
+            [['decor',
+            ['foo',
+            'bar']],
+            ['view',
+            ['abc.php']]],
+            $fn->buildPlugins(['view'=>$dummyPlugin, 'decor'=>$dummyPlugin])
+        );
   
     }
-
 }

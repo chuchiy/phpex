@@ -6,7 +6,7 @@ class Templater extends HighorderPlugin
     protected $templateDir;
     protected $lazy;
 
-    public function __construct($templateDir, $lazy=true)
+    public function __construct($templateDir, $lazy = true)
     {
         $this->templateDir = $templateDir;
         $this->lazy = $lazy;
@@ -30,7 +30,7 @@ class Templater extends HighorderPlugin
     {
         extract($context);
         ob_start();
-        foreach($templates as $template) { 
+        foreach ($templates as $template) {
             require $this->templateDir. '/' . $template;
         }
         return ob_get_clean();
@@ -39,16 +39,16 @@ class Templater extends HighorderPlugin
 
     protected function lazyRender($context, $templates)
     {
-        $stringify = function($context) use ($templates) {
+        $stringify = function ($context) use ($templates) {
             return $this->render($context, $templates);
         };
-        return new \Pex\ViewRender($stringify, $context);     
+        return new \Pex\ViewRender($stringify, $context);
     }
 
     protected function apply($cycle, $run, $name, $args)
     {
-        $cycle->register($name, function($cycle){
-            return $this; 
+        $cycle->register($name, function ($cycle) {
+            return $this;
         });
         $r = $run($cycle);
         if (!$args) {

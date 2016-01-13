@@ -17,9 +17,9 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $item = $this->pool->getItem($k);
         $this->pool->save($item->set(['foo'=> 'bar']));
         $cycle = new \Pex\Cycle((new ServerRequest)->withHeader('x-pexsession', $k));
-        $runner = function($cycle) {
+        $runner = function ($cycle) {
             $cycle->session['hello'] = 'world';
-            return 'ok'; 
+            return 'ok';
         };
         $callable = call_user_func($this->session, $runner);
         $r = $callable($cycle);
@@ -37,10 +37,10 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $k = uniqid('sess');
         $this->pool->save($this->pool->getItem($k)->set([]));
         $cycle = new \Pex\Cycle((new ServerRequest)->withHeader('x-pexsession', $k));
-        $runner = function($cycle) {
+        $runner = function ($cycle) {
             $cycle->session['hello'] = 'world';
             throw new \Pex\Exception\HttpException(403);
-            return 'ok'; 
+            return 'ok';
         };
         $callable = call_user_func($this->session, $runner);
         try {
@@ -48,7 +48,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
             //should not reach here
             $this->assertEquals(0, 1);
         } catch (\Pex\Exception\HttpException $ex) {
-            $this->assertEquals(403, $ex->getStatusCode()); 
+            $this->assertEquals(403, $ex->getStatusCode());
         }
         $val = $this->pool->getItem($k)->get();
         $this->assertEquals('world', $val['hello']);
@@ -57,12 +57,15 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     /**
      *
      *
-     * @expectedException \Pex\Exception\HttpException 
+     * @expectedException \Pex\Exception\HttpException
      */
     public function testSessionNotFound()
     {
         $cycle = new \Pex\Cycle((new ServerRequest)->withHeader('x-pexsession', 'haha'));
-        $runner = function($cycle) { return 'ok'; };
+        $runner = function ($cycle) {
+            return 'ok';
+
+        };
         $callable = call_user_func($this->session, $runner);
         $callable($cycle);
     }
@@ -70,17 +73,16 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     /**
      *
      *
-     * @expectedException \Pex\Exception\HttpException 
+     * @expectedException \Pex\Exception\HttpException
      */
     public function testSessionKeyNotFound()
     {
         $cycle = new \Pex\Cycle(new ServerRequest);
-        $runner = function($cycle){return 'ok';};
+        $runner = function ($cycle) {
+            return 'ok';
+
+        };
         $callable = call_user_func($this->session, $runner);
         $callable($cycle);
     }
-
-
-
 }
-

@@ -4,7 +4,7 @@ namespace Pex\Plugin;
 /**
  * a simple user session manager
  *
- * 
+ *
  */
 class Session extends BasePlugin
 {
@@ -16,7 +16,7 @@ class Session extends BasePlugin
      *
      * @param CacheItemPoolInterface $pool
      */
-    public function __construct($pool, $sessionName='PEXSESSION', $timeout=1800)
+    public function __construct($pool, $sessionName = 'PEXSESSION', $timeout = 1800)
     {
         $this->pool = $pool;
         $this->sessionName = $sessionName;
@@ -31,9 +31,9 @@ class Session extends BasePlugin
             $item = $this->pool->getItem($key);
             if ($item->isHit()) {
                 $value = $item->get();
-                $cycle->register('session', function($c) use ($value) {
-                    return new \ArrayObject($value); 
-                }); 
+                $cycle->register('session', function ($c) use ($value) {
+                    return new \ArrayObject($value);
+                });
             } else {
                 $this->sessionNotFound();
             }
@@ -44,12 +44,12 @@ class Session extends BasePlugin
                 $this->pool->save($item->expiresAfter($this->timeout)->set((array)$cycle->session));
             }
             return $r;
-        } catch (\Pex\Exception\HttpException $ex){
+        } catch (\Pex\Exception\HttpException $ex) {
             if (isset($cycle->session)) {
                 $this->pool->save($item->expiresAfter($this->timeout)->set((array)$cycle->session));
             }
-            throw $ex; 
-        } 
+            throw $ex;
+        }
     }
 
     /**

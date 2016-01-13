@@ -3,10 +3,10 @@ namespace Pex\HttpTest;
 
 class PluginView
 {
-    public function __invoke($route) 
+    public function __invoke($route)
     {
         $route->install(PexPluginTest::stepInserter('G', 'H'));
-        $route->bindAnnotation('step', function($name, $args){
+        $route->bindAnnotation('step', function ($name, $args) {
             return \Pex\HttpTest\PexPluginTest::stepInserter($args[0], $args[1]);
         });
     }
@@ -31,5 +31,4 @@ class PluginView
     {
         return '-RR-';
     }
-
 }

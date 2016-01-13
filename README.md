@@ -12,9 +12,9 @@ The main purpose of PHPex framework is to solve some important real-world applic
 
 - high-order function based powerful middleware/plugin with flexible process chain
 - class method annotation and direct function based url routing with parameters and pattern matching
-- an all-in-one cycle object pass to request handler does input, output, lazy initialization dependency injection and more.
+- an all-in-one cycle object pass to request handler does request, response, lazy initialization dependency injection and more.
 - request handler can return String, Callable, Traversable, Generator, Stream. Just for your convenience
-- lazy template for real-world complex web page composition
+- lazy template for complex web page composition
 
 ## Installation
 
@@ -127,8 +127,8 @@ $pex->attach('/path-at/')->get('a', function($c){
     };
 });
 ```
-call \$pex->attach will mount all routing in latter method chaining at the attaced path. 
-call \$pex->with in a method chaining will install a plugin for all routing in that method chaining.
+call `$pex->attach` will mount all routing in latter method chaining at the attaced path. 
+call `$pex->with` in a method chaining will install a plugin for all routing in that method chaining.
 
 So http://localhost:8080/path-at/a will display A and http://localhost:8080/a will give a 404 not found http status code.
 
@@ -211,8 +211,9 @@ Plugin can also implement with class. just use __invoke magic method to receive 
 
 Plugin has 4 effective scope: 
 
-- *Global Level* 
-Global plugin install via $pex->install, such plugins will take effect to any matched http request.
+### *Global Level Plugin* 
+
+Global plugin install via `$pex->install`, such plugins will take effect to any matched http request.
 
 ```php
 $pex = new \Pex\Pex;
@@ -220,13 +221,15 @@ $pex->install('global_plugin');
 $pex->install('global_plugin2');
 ```
 
-- *Group Level*
+### *Group Level Plugin*
+
 Group plugin install with routing method chain, which will take effect to handler in method chain.
 
 ```php
-$pex->post('foo', 'foo_handler')->get('bar', 'bar_handler')->with('awesome_plugin');
+$pex->post('/foo', 'foo_handler')->get('/bar', 'bar_handler')->with('awesome_plugin');
 ```
-- *Class Level*
+### *Class Level Plugin*
+
 Class plugin install at class's __invoke method, which will take effect to class method handler.
 
 ```php
@@ -242,8 +245,9 @@ class Foo {
 
 ```
 
-- *Method Level*
-Method plugin install with method annotation, $pex/$route->bindAnnotation should be called to bind a annotation command to a high-order plugin. High-order plugin is a callable receive annotation command name and args pass to annotation command, return a valid plugin, so you a utilize the args pass to annotation command 
+### *Method Level Plugin*
+
+Method plugin install with method annotation, `$pex->bindAnnotation` or `$route->bindAnnotation` should be called to bind a annotation command to a high-order plugin. High-order plugin is a callable receive annotation command name and args pass to annotation command, return a valid plugin, so you can utilize the args pass to annotation command 
 
 ```php
 class Foo {
@@ -278,27 +282,28 @@ $pex->bindAnnotation('custhdr', function($name, $args){
 
 ## The Cycle Object
 
-Request handler only has a parameter: an all-in-one $cycle object. Cycle object can be used to:
+Request handler only has a parameter: an all-in-one `$cycle` object. Cycle object can be used to:
 1. Get input parameters
 2. Dependency Injection & Service Container
 3. Wrapper for PSR-7 compatible HTTP Request/Response and handy object for request/response process
 
 ### Parameters
 
-You can get path/cookie/post/get parameters by using \$cycle->want('arg') and \$cycle->get('arg'). ArrayAccess
-like \$cycle\["args"\], isset(\$cycle\["args"\]) is also available.
+You can get path/cookie/post/get parameters by using `$cycle->want('arg')` and `$cycle->get('arg')`. ArrayAccess
+like `$cycle["args"]`, `isset($cycle["args"])` is also available.
 
-\$cycle->want will thrown InvaidArgumentException if the parameter name is not found. \$cycle->get all accept a 
-second \$default(null if not set) parameter to return $default when parameter name is not found.
+`$cycle->want` will thrown InvaidArgumentException if the parameter name is not found. `$cycle->get` all accept a 
+second `$default`(null if not set) parameter to return `$default` when parameter name is not found.
 
 ### Dependency Injection & Service Container
 
-Plugin/Request handler use \$cycle to inject and get service. You can use inject/register method to inject a callable to a service name. 
+Plugin/Request handler use `$cycle` to inject and get service. You can use inject/register method to inject a callable to a service name. 
 
 The difference between inject and register is: 
 
-..If you use inject, everytime you use \$cycle->srvname the relevant callable will be called and you get the return. 
-..If you use register, the callable will only be called at the first time, and the result will be cached, you will always get the same result in latter \$cycle->srvname.
+If you use inject, everytime you use `$cycle->srvnam`e the relevant callable will be called and you get the return. 
+
+If you use register, the callable will only be called at the first time, and the result will be cached, you will always get the same result in latter `$cycle->srvname`.
 
 Use callable for injection give your ability of lazy initialization, the service is create only when you actual use it.
 
@@ -320,13 +325,13 @@ var_dump($cycle->counter2); //will output 1
  
 ### Request and Response
 
-You can get PSR-7 compatible HTTP Request/Response use \$cycle->request() and \$cycle->response(). 
+You can get PSR-7 compatible HTTP Request/Response use `$cycle->request()` and `$cycle->response()`. 
 
-Cycle also provides \$cycle->client() to give a \\Pex\\Client instance with some handy method to get common http header. 
+Cycle also provides `$cycle->client()` to get a \\Pex\\Client instance with some handy method to retrieve common http header. 
 
-If you want to add reponse headers, use \$cycle->reply()->setHeader() to add headers, ArrayAccess operator is also available, the added headers will dump to client after end of process chain. 
+If you want to add headers to response, use `$cycle->reply()->setHeader()` to add headers, ArrayAccess operator is also available, the added headers will dump to client after end of process chain. 
 
-Cycle object is also callable. Just like python wsgi's start_response, call the \$cycle immediately flush the status code and headers to client and return a writer callable which can be used to write contents to client. \$cycle->response() will return the created http response after 
+Cycle object is also callable. Just like python wsgi's start_response, call the `$cycle` immediately flush the status code and headers to client and return a writer callable which can be used to write contents to client. `$cycle->response()` will return the created http response only after `$cycle` is called. 
 
 ```php
 $request = $cycle->request();  //return a PSR-7 http request
@@ -343,9 +348,9 @@ $response = $cycle->response();
 
 ```
 
-\$cycle->interrupt($status, $headers=[], $body=null) will throw a \\Pex\\Exception\\HttpException. 
+`$cycle->interrupt($status, $headers=[], $body=null)` will throw a \\Pex\\Exception\\HttpException. 
 
-After install \\Pex\\Plugin\\CatchHttpException plugin at global scope, you can use \$cycle->interrupt to interrupt current process and direct return with given $status, $headers and $body, such as page redirect.
+After install \\Pex\\Plugin\\CatchHttpException plugin at global scope, you can use `$cycle->interrupt` to interrupt current process and direct return with given $status, $headers and $body, such as page redirect.
 
 ```php
 $pex->install(new \Pex\Plugin\CatchHttpException);
@@ -406,7 +411,7 @@ The outter plugins can manipulate the returned view-render as array. So in templ
 
 At the process chain finish execute, because view render is callable, the framework will try to call the result and get the real rendered page.
 
-Template plugin will also inject a template instance to \$cycle with the annotation name. In the above example, request handler can use \$cycle->view->render(\$context, \$templateFile) to direct render template.
+Template plugin will also inject a template instance to `$cycle` with the annotation name. In the above example, request handler can use `$cycle->view->render(\$context, \$templateFile)` to direct render template.
 
 ### Jsonize & CatchHttpException
 
@@ -417,7 +422,7 @@ CatchHttpException need to install as the first plugin of whole process chain. T
 
 ## Code Recipes
 
-Process time counting plugin
+### Process time counting plugin
 
 ```php
 <?php
@@ -435,7 +440,7 @@ $pex->install(function($run){
 });
 ```
 
-Inject a database instance
+### Inject a database instance
 
 ```php
 $pex->install(function($run){
@@ -447,7 +452,7 @@ $pex->install(function($run){
     }
 });
 ```
-Client staff
+### Client staff
 
 ```php
 $cycle->client()->userAgent(); //get request user-agent
@@ -458,7 +463,7 @@ $cycle->client()->redirect($url); //redirect client to $url
 $cycle->client()->referer(); //get request referer
 ```
 
-Class-Style Plugin
+### Class-Style Plugin
 
 ```php
 
@@ -477,7 +482,7 @@ class Jsonize extends \Pex\Plugin\BasePlugin
 
 ```
 
-High-order Class-Style Plugin
+### High-order Class-Style Plugin
 
 ```php
 class AddHeader extends HighorderPlugin
@@ -491,7 +496,7 @@ class AddHeader extends HighorderPlugin
 }
 ```
 
-View plugin without parameters
+### View plugin without parameters
 
 ```php
 class Page {
@@ -505,4 +510,23 @@ class Page {
         return $cycle->view->render(['name'=>'foobar'], 'test.php');
     }
 }
+```
+
+### Proper redirect with mountpoint info
+
+```php
+function go2login($cycle) {
+    $cycle->client()->redirect($cycle->mountpoint() . 'login'); //will redirect to /app/login
+}
+$pex->attach('/app/')->get('/auth', 'go2login');
+```
+
+## Request parameters retrieval
+
+```php
+$val = $cycle->want('foo'); //throw InvalidArgumentException if parameter not found
+$val = $cycle->get('foo'); //return null if parameter not found
+$val = $cycle->get('foo', 'dftval');
+$val = $cycle['foo'];
+isset($cycle['foo']);
 ```

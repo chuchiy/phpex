@@ -5,11 +5,14 @@ php:
   - '7.0'
   - hhvm
 
-install: composer install -n
+install: 
+  - composer install -n
+  - composer require satooshi/php-coveralls squizlabs/php_codesniffer
 
 script:
  - mkdir -p build/logs
  - phpunit --coverage-clover build/logs/clover.xml
+ - php vendor/bin/phpcs
 
 after_script:
  - php vendor/bin/coveralls -v

@@ -1,7 +1,7 @@
 <?php
 namespace Pex;
 
-class Client 
+class Client
 {
     private $request;
 
@@ -12,7 +12,7 @@ class Client
 
     public function isAjax()
     {
-        return $this->getHeader('x-requested-with') == 'XMLHttpRequest'; 
+        return $this->getHeader('x-requested-with') == 'XMLHttpRequest';
     }
 
     public function contentType()
@@ -38,7 +38,7 @@ class Client
         }
         $forwardedfor = $this->getHeader('x-forwarded-for');
         if ($forwardedfor) {
-            $forwardedItems = preg_split("/;|,|\s/", $forwardedfor); 
+            $forwardedItems = preg_split("/;|,|\s/", $forwardedfor);
             $ip = array_pop($forwardedItems);
             $ip = filter_var($ip, FILTER_VALIDATE_IP, $publicIpFlag);
             if ($ip) {
@@ -51,7 +51,7 @@ class Client
 
     public function redirect($url)
     {
-        throw new \Pex\Exception\HttpException(302, ['location' => $url]); 
+        throw new \Pex\Exception\HttpException(302, ['location' => $url]);
     }
 
     public function referer()
@@ -68,9 +68,9 @@ class Client
     {
         $header = $this->request->getHeader($name);
         if ($header) {
-            return $header[0]; 
+            return $header[0];
         } else {
-            return null; 
+            return null;
         }
     }
 }

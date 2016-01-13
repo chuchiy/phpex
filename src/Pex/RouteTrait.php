@@ -5,9 +5,9 @@ trait RouteTrait
 {
     use Route\HttpMethodTrait;
 
-    public function attach($mountpoint='/', $class=null)
+    public function attach($mountpoint = '/', $class = null)
     {
-        $route = new Route($mountpoint, $class); 
+        $route = new Route($mountpoint, $class);
         $this->routes[] = $route;
         return $route;
     }
@@ -33,9 +33,9 @@ trait RouteTrait
                 $result['annotationPlugins'] = $route->getAnnotationPlugins();
                 $result['parameters'] = $parameters;
                 $result['mountpoint'] = $route->getMountPoint();
-                return $result; 
+                return $result;
             }
         }
-        return null; 
+        return null;
     }
 }

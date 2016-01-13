@@ -7,7 +7,7 @@ class HttpException extends \Exception
     private $headers=[];
     private $body;
 
-    public function __construct($status, $headers=[], $body=null)
+    public function __construct($status, $headers = [], $body = null)
     {
         $this->statusCode = $status;
         $this->headers = $headers;
@@ -24,9 +24,8 @@ class HttpException extends \Exception
         return $this->headers;
     }
 
-    public function  getBody()
+    public function getBody()
     {
         return $this->body;
     }
-
 }

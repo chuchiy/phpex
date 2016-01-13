@@ -20,12 +20,11 @@ trait PluginTrait
 
     public function getPlugins()
     {
-        return $this->plugins; 
+        return $this->plugins;
     }
 
     public function getAnnotationPlugins()
     {
-        return $this->annotationPlugins; 
+        return $this->annotationPlugins;
     }
-
 }
