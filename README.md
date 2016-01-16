@@ -125,8 +125,8 @@ $pex->attach('/path-at/')->get('/a', function($c){
     };
 });
 ```
-call `$pex->attach` will mount all routing staff in method chaining tp the attached path. 
-call `$pex->with` in a method chaining will install a plugin for all routing in that method chaining.
+`$pex->attach($path)` will mount all routing staff in method chaining tp the attached path. 
+`->with($plugin)` in a method chaining will install a plugin for all routing in that method chaining.
 
 So http://localhost:8080/path-at/a will display *A* (with the help of strtoupper plugin) and http://localhost:8080/a will give you 404 not found http status code.
 
@@ -268,7 +268,7 @@ class Foo {
 }
 $pex->attach('/', 'Foo');
 //bind a high-order function to annotation command custhdr
-//$name = custhdr, $args = ['x-...', '....']
+//$name = 'custhdr', $args = ['x-...', '....']
 $pex->bindAnnotation('custhdr', function($name, $args){
     //return a plugin
     return function($run) use ($name, $args) {
@@ -285,6 +285,7 @@ $pex->bindAnnotation('custhdr', function($name, $args){
 ## The Cycle Object
 
 Request handler only has one parameter: an all-in-one `$cycle` object. Cycle object can be used to:
+
 1. Get input parameters from path/cookie/post/get
 2. Dependency Injection & Service Container
 3. Wrapper for PSR-7 compatible HTTP Request/Response and handy way for request/response process
@@ -447,13 +448,27 @@ $pex->install(function($run){
 ```php
 $pex->install(function($run){
     return function($cycle) use ($run) {
-        $cycle->register('db', function($c){
+        $cycle->register('db', function($c) {
             return new \PDO('sqlite::memory:');
         });
         return $run($cycle);
     }
 });
 ```
+
+### Request post body json parser plugin
+```php
+function jsonInput($run) {
+    return function($cycle) use ($run) {
+        //$c is the latest cycle object when $cycle->input is first called
+        $cycle->register('input', function($c) {
+            return json_decode((string)$c->request()->getBody(), true);
+        });
+        return $run($cycle);
+    };
+}
+```
+
 ### Client staff
 
 ```php
@@ -487,7 +502,7 @@ class Jsonize extends \Pex\Plugin\BasePlugin
 ### High-order Class-Style Plugin
 
 ```php
-class AddHeader extends HighorderPlugin
+class AddHeader extends \Pex\Plugin\HighorderPlugin
 {
     protected function apply($cycle, $run, $name, $args)
     {
@@ -546,3 +561,5 @@ $val = $cycle->get('foo', 'dftval');
 $val = $cycle['foo'];
 isset($cycle['foo']);
 ```
+
+
