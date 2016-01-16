@@ -181,7 +181,7 @@ With PHPex. you can just setup 1st level mountpoint dispatch map at front contro
 
 ### Request Handler
 
-A request handler in PHPex is a callable to process http request.Request handler receive one cycle object as parameter and natively return string, callable, traversable, generator, stream or nothing(if you direct write to reponse body). Request handler, in most case, is wrapped by some plugins. Then became the processchain.
+A request handler in PHPex is a callable to process http request. Request handler receive one cycle object as parameter and natively return string, callable, traversable, generator, stream or nothing(if you direct write to reponse body). Request handler, in most case, is wrapped by some plugins. Then became the process chain.
 
 The plugins can alter the parameter and return of Request handler with ease. In real world development, the most widely use return type of request handler is array. And the plugins will transform the assoc-array to json string or html page in different scenario and plugin configurations.
 
@@ -521,7 +521,7 @@ function go2login($cycle) {
 $pex->attach('/app/')->get('/auth', 'go2login');
 ```
 
-## Request parameters retrieval
+### Request parameters retrieval
 
 ```php
 $val = $cycle->want('foo'); //throw InvalidArgumentException if parameter not found
