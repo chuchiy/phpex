@@ -66,6 +66,24 @@ class PexServerTest extends \PHPUnit_Framework_TestCase
         $r = $this->runner->get('/v/decor');
         $this->assertEquals(200, $r->getStatusCode());
         $this->assertEquals('foobarplaintext', (string)$r->getBody());
+
+    }
+
+    public function testMultiMethodPlugin()
+    {
+        $this->pex->bindAnnotation('hdr', function ($name, $args) {
+            $plugin = function ($run) use ($args) {
+                return function ($cycle) use ($run, $args) {
+                    $r = $run($cycle);
+                    $cycle->reply()[$args[0]] = $args[1];
+                    return $r;
+                };
+            };
+            return $plugin;
+        });
+        $r = $this->runner->get('/v/extrahdr');
+        $this->assertEquals(200, $r->getStatusCode());
+        $this->assertEquals(['foo'=>['bar'], 'hello'=>['world']], $r->getHeaders());
     }
 
     public function testPage()

@@ -85,6 +85,18 @@ class View
 
     /**
      *
+     * @hdr('foo', 'bar')
+     * @hdr('hello', 'world')
+     * @get('/extrahdr')
+     */
+    public function extrahdr($cycle)
+    {
+        return 'plaintext';
+    }
+
+
+    /**
+     *
      * @get('/generator')
      */
     public function generator($cycle)

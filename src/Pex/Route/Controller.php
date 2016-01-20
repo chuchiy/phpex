@@ -39,9 +39,13 @@ class Controller
     public function insertDefinitions(&$definitions)
     {
         foreach ($this->routeDefinitions as $method => $defs) {
+            $disp = isset($definitions[$method])?$definitions[$method]:new \Pex\Dispatcher;
             foreach ($defs as $def) {
-                $definitions[$method][] = $def;
+                list($handler, $pattern) = $def;
+                $disp->add($pattern, $handler);
+                #$definitions[$method][] = $def;
             }
+            $definitions[$method] = $disp;
         }
     }
 }

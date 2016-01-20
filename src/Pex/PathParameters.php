@@ -3,14 +3,25 @@ namespace Pex;
 
 class PathParameters
 {
+    private static $typeHintDefine = [
+        'int'     => '\d+',
+        'float'   => '[-+]?(\d*)?\.\d+',
+        'numeric' => '[-+]?(\d*[.])?\d+',
+    ];
+
     public static function match($path, $pattern)
     {
-        $paramKeys = [];
         $regexPattern = preg_replace_callback(
-            '/<(\w*)>/',
-            function ($matches) use ($paramKeys) {
-                $paramKeys[] = $matches[1];
-                return "(?P<".$matches[1].">\w+)";
+            '/<([^<>]*)>/',
+            function ($matches) {
+                $parts = explode(':', $matches[1]);
+                $captureName = $parts[0];
+                if (count($parts) > 1) {
+                    $typeHint = (isset(self::$typeHintDefine[$parts[1]]))?self::$typeHintDefine[$parts[1]]:$parts[1];
+                } else {
+                    $typeHint = '\w+';
+                }
+                return "(?P<".$captureName.">".$typeHint.")";
             },
             str_replace(
                 '/',

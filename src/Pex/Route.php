@@ -65,6 +65,14 @@ class Route
         if (!isset($this->definitions[$method])) {
             return null;
         }
+        $disp = $this->definitions[$method];
+        $r = $disp->find($requestPath);
+        if ($r) {
+            list($handler, $pathParams) = $r;
+            $pathParameters = $pathParams;
+            return $handler;
+        }
+        /*
         foreach ($this->definitions[$method] as $define) {
             list($handler, $pattern) = $define;
             $pathParams = PathParameters::match($requestPath, $pattern);
@@ -73,13 +81,19 @@ class Route
                 return $handler;
             }
         }
+         */
         return null;
     }
 
     private function add($methods, $pattern, $handler)
     {
         foreach ((array)$methods as $method) {
-            $this->definitions[$method][] = [$handler, self::joinPath($this->mountpoint, $pattern)];
+            if (!isset($this->definitions[$method])) {
+                $this->definitions[$method] = new Dispatcher;
+            }
+            $disp = $this->definitions[$method];
+            $disp->add(self::joinPath($this->mountpoint, $pattern), $handler);
+            #$this->definitions[$method][] = [$handler, self::joinPath($this->mountpoint, $pattern)];
         }
         return $this;
     }
