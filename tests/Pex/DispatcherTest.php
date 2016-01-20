@@ -101,5 +101,4 @@ class DispatchTest extends \PHPUnit_Framework_TestCase
         $matches = $this->disp->find($path);
         $this->assertEquals(false, $matches);
     }
-
 }
