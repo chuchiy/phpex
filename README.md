@@ -480,7 +480,7 @@ $cycle->client()->redirect($url); //redirect client to $url
 $cycle->client()->referer(); //get request referer
 ```
 
-### Class-Style Plugin
+### Class-style plugin
 
 ```php
 
@@ -499,7 +499,7 @@ class Jsonize extends \Pex\Plugin\BasePlugin
 
 ```
 
-### High-order Class-Style Plugin
+### High-order class-style plugin
 
 ```php
 class AddHeader extends \Pex\Plugin\HighorderPlugin
@@ -560,6 +560,30 @@ $val = $cycle->get('foo'); //return null if parameter not found
 $val = $cycle->get('foo', 'dftval');
 $val = $cycle['foo'];
 isset($cycle['foo']);
+```
+
+### Retrieve file contents
+
+```php
+//return file stream
+function fileStream($cycle) {
+    return fopen('foo.bar', 'r');
+}
+//generator
+function fileStream($cycle) {
+    $fp = fopen('foo.bar', 'r');
+    while (!feof($fp)) {
+        yield fread($fp, 8192);
+    }
+}
+//write to response body
+function fileWriter($cycle) {
+    $writer = $cycle();
+    $fp = fopen('foo.bar', 'r');
+    while (!feof($fp)) {
+        $writer(fread($fp, 8192));
+    }    
+}
 ```
 
 
