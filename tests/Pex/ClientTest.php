@@ -68,11 +68,9 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             $c->redirect($url);
             //should not reach here
             $this->assertTrue(false);
-        
         } catch (\Pex\Exception\HttpException $ex) {
             $this->assertEquals(302, $ex->getStatusCode());
             $this->assertEquals(['location'=>$url], $ex->getHeaders());
         }
-        
     }
 }
